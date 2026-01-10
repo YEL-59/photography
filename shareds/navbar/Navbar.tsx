@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
-  const isLightPage = pathname === "/contact";
+  const isLightPage = pathname === "/contact" || pathname === "/about";
 
   useEffect(() => {
     const handleScroll = () => {
