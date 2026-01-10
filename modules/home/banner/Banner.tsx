@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -28,11 +29,12 @@ const Banner = () => {
         </p>
 
         <div className="mt-8 md:mt-12">
-          <button className="px-10 md:px-16 py-3 md:py-4 border-[1.5px] border-white/50 rounded-full text-[13px] md:text-[15px] font-semibold hover:bg-white hover:text-black transition-all duration-700 backdrop-blur-[2px] tracking-[0.15em] uppercase group">
+          <Link href="/portfolio"><button className="px-10 md:px-16 py-3 md:py-4 border-[1.5px] border-white/50 rounded-full text-[13px] md:text-[15px] font-semibold hover:bg-white hover:text-black transition-all duration-700 backdrop-blur-[2px] tracking-[0.15em] uppercase group">
             <span className="group-hover:scale-110 transition-transform inline-block">
               Portfolio
             </span>
-          </button>
+          </button></Link>
+          
         </div>
       </div>
 
