@@ -402,12 +402,12 @@ const Portfolio = () => {
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         {/* Header Section */}
         <div className="flex flex-col items-center gap-6 mb-16 text-center animate-fade-in">
-          <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+          <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-xl border-4 border-white hover:rotate-10 :rotate-0 transition-all duration-300">
             <Image
               src="/images/about.webp" // Using the photographer portrait
               alt="Profile"
               fill
-              className="object-cover"
+              className="object-cover "
             />
           </div>
           <div className="flex flex-col gap-2">
