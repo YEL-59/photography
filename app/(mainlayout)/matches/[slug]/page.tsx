@@ -1,4 +1,4 @@
-import MatchPhotos from "../../../../pages/matches/MatchPhotos";
+import MatchPhotos from "../../../../modules/matches/MatchPhotos";
 
 export default async function MatchPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;

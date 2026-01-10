@@ -1,5 +1,5 @@
-import Banner from "@/pages/home/banner/Banner";
-import Browse from "@/pages/home/browse/Browse";
+import Banner from "@/modules/home/banner/Banner";
+import Browse from "@/modules/home/browse/Browse";
 
 const Home = () => {
   return (
