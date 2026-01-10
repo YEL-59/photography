@@ -1,15 +1,17 @@
 "use client";
 
-import { ShoppingBag, ChevronDown, Menu } from "lucide-react";
+import { ShoppingBag, ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
-  const isLightPage = pathname === "/contact" || pathname === "/about";
+  const { totalItems } = useCart();
+  const isLightPage = pathname === "/contact" || pathname === "/about" || pathname === "/portfolio" || pathname === "/cart";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,11 +73,20 @@ const Navbar = () => {
         </div>
 
         {/* Action & Mobile Menu */}
-        <div className={`flex items-center gap-6 text-xl transition-colors duration-300 ${navTextColor}`}>
-          <ShoppingBag
-            size={24}
-            className="cursor-pointer hover:scale-110 transition-transform duration-300"
-          />
+        <div className={`flex items-center gap-6 transition-colors duration-300 ${navTextColor}`}>
+          <Link href="/cart" className="relative group p-1">
+            <ShoppingBag
+              size={24}
+              className="cursor-pointer group-hover:scale-110 transition-transform duration-300"
+            />
+            {totalItems > 0 && (
+              <span className={`absolute -top-1 -right-1 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold ring-2 transition-colors ${
+                isScrolled || !isLightPage ? "bg-white text-black ring-black/20" : "bg-black text-white ring-white"
+              }`}>
+                {totalItems}
+              </span>
+            )}
+          </Link>
           <Menu className="md:hidden cursor-pointer" size={28} />
         </div>
       </div>
