@@ -9,9 +9,27 @@ import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { totalItems } = useCart();
-  const isLightPage = pathname === "/contact" || pathname === "/about" || pathname === "/portfolio" || pathname === "/cart";
+  const isLightPage = pathname === "/contact" || pathname === "/about" || pathname === "/portfolio" || pathname === "/cart" || pathname?.startsWith("/matches");
+
+  const matches = [
+    "BTFC vs Hashtag United 030126",
+    "BTFC vs Carshalton 201225",
+    "BTFC vs Wellington United 221125",
+    "Broadbridge Heath vs BTFC 041025",
+    "BTFC vs Hednesford 300925",
+    "Hednesford vs BTFC",
+    "BTFC vs Berkhamstead",
+    "BTFC vs Ramsgate",
+    "BTFC vs Barton Rovers 300825",
+    "BTFC vs Cray Wanderers 230825",
+    "BTFC vs Wingate & Finchley",
+    "BTFC vs Aldershot Town",
+    "BTFC vs Chatham Velocity Cup",
+    "BTFC vs Folkestone Invicta 18th Apr 2025",
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,10 +75,39 @@ const Navbar = () => {
               <span className={`absolute -bottom-1 left-0 w-full h-[1.5px] ${isScrolled || !isLightPage ? "bg-white" : "bg-black"}`}></span>
             )}
           </Link>
-          <div className="flex items-center gap-1.5 cursor-pointer group hover:opacity-70 transition-all duration-300">
-            BTFC Matches
-            <ChevronDown size={16} className="mt-0.5" />
+          
+          {/* Dropdown for BTFC Matches */}
+          <div 
+            className="relative group"
+            onMouseEnter={() => setIsDropdownOpen(true)}
+            onMouseLeave={() => setIsDropdownOpen(false)}
+          >
+            <div className="flex items-center gap-1.5 cursor-pointer hover:opacity-70 transition-all duration-300 py-2">
+              BTFC Matches
+              <ChevronDown 
+                size={16} 
+                className={`mt-0.5 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} 
+              />
+            </div>
+            
+            {/* Dropdown Menu */}
+            <div className={`absolute top-full left-1/2 -translate-x-1/2 w-[320px] bg-white text-black shadow-2xl rounded-xl overflow-hidden transition-all duration-300 origin-top transform ${
+              isDropdownOpen ? "opacity-100 scale-100 translate-y-2 visibility-visible" : "opacity-0 scale-95 translate-y-0 pointer-events-none"
+            }`}>
+              <div className="max-h-[400px] overflow-y-auto py-3 custom-scrollbar">
+                {matches.map((match, index) => (
+                  <Link
+                    key={index}
+                    href={`/matches/${match.toLowerCase().replace(/ /g, "-")}`}
+                    className="block px-6 py-3 text-[14px] hover:bg-black/5 transition-colors duration-200 border-b border-gray-50 last:border-0"
+                  >
+                    {match}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
+
           <Link href="/portfolio" className="hover:opacity-70 transition-all duration-300">
             Portfolio
           </Link>

@@ -1,0 +1,65 @@
+# SM Photography - Match Gallery API Documentation
+
+This document outlines the required API endpoints and data structures needed to migrate the static match gallery to a dynamic, backend-driven system.
+
+## 1. Get Matches List
+Used by the Navbar dropdown to display available matches.
+
+**Endpoint:** `GET /api/matches`
+**Response:**
+```json
+[
+  {
+    "id": "match-uuid-1",
+    "title": "BTFC vs Hashtag United 030126",
+    "slug": "btfc-vs-hashtag-united-030126",
+    "date": "2026-01-03"
+  },
+  ...
+]
+```
+
+## 2. Get Match Details & Photos
+Used by the Match Gallery page to display photos for a specific match.
+
+**Endpoint:** `GET /api/matches/{slug}`
+**Response:**
+```json
+{
+  "id": "match-uuid-1",
+  "title": "BTFC vs Hashtag United 030126",
+  "coverImage": "/images/match-cover-1.jpg",
+  "photos": [
+    {
+      "id": "photo-uuid-1",
+      "url": "https://cdn.example.com/photos/1.jpg",
+      "title": "Action Shot 1",
+      "price": 15.00
+    },
+    ...
+  ]
+}
+```
+
+## 3. Cart & Checkout (Existing Flow)
+The gallery currently uses the `useCart` context. Ensure the items added follow this structure:
+
+**Cart Item Object:**
+```json
+{
+  "id": "string",
+  "url": "string",
+  "title": "string",
+  "price": number
+}
+```
+
+- **Favorites**: `POST /api/favorites` (requires email)
+- **Downloads**: `POST /api/downloads/verify-pin` (requires PIN)
+
+---
+
+### Implementation Notes for Later:
+1. Update `Navbar.tsx` to fetch `matches` array using `useEffect`.
+2. Update `MatchPhotos.tsx` to fetch data based on the `slug` prop instead of generating `DUMMY_GALLERY`.
+3. Implement loading skeletons for better UX during data fetching.
