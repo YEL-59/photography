@@ -125,7 +125,7 @@ const MatchPhotos = ({ title }: { title: string }) => {
   }, [visibleCount, DUMMY_GALLERY.length]);
 
   return (
-    <div className="min-h-screen bg-white text-black pt-20">
+    <div className="min-h-screen bg-white text-black">
       <CartDrawer isOpen={activeModal === "cart"} onClose={() => setActiveModal(null)} />
       
       {/* Match Hero */}

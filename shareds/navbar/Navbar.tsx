@@ -4,7 +4,7 @@ import { ShoppingBag, ChevronDown, Menu, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import Logo from "@/assets/images/logo.webp";
 import {
@@ -27,9 +27,11 @@ const Navbar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { totalItems } = useCart();
   
-  const isLightPage = pathname === "/contact" || pathname === "/about" || pathname === "/portfolio" || pathname === "/cart" || pathname?.startsWith("/matches");
+  const hasAlbum = searchParams.get("album");
+  const isLightPage = (pathname === "/portfolio" && !hasAlbum) || pathname === "/contact" || pathname === "/about" || pathname === "/cart";
 
   const matches = [
     "BTFC vs Hashtag United 030126",
@@ -87,7 +89,7 @@ const Navbar = () => {
           : "bg-transparent py-8"
       }`}
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between">
+      <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center">

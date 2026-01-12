@@ -165,12 +165,20 @@ const Portfolio = () => {
     setSelectedAlbum(album);
     setView("album");
     setVisibleCount(6);
+    // Add album param to URL so Navbar can detect album view
+    const url = new URL(window.location.href);
+    url.searchParams.set("album", album.id.toString());
+    window.history.pushState({}, "", url.toString());
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBack = () => {
     setView("grid");
     setSelectedAlbum(null);
+    // Remove album param from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete("album");
+    window.history.pushState({}, "", url.toString());
   };
 
   useEffect(() => {
@@ -191,7 +199,7 @@ const Portfolio = () => {
 
   if (view === "album" && selectedAlbum) {
     return (
-      <div className="min-h-screen bg-white text-black pt-20">
+      <div className="min-h-screen bg-white text-black">
         <CartDrawer isOpen={activeModal === "cart"} onClose={() => setActiveModal(null)} />
         
         {/* Album Hero */}
