@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Link2, Mail, LayoutGrid, ArrowLeft, Download, Share2, Play, Heart, X as CloseIcon, Copy, MessageCircle, Facebook, Twitter, Pin, AtSign, MoreHorizontal, ShoppingCart, ShoppingBag, Trash2 } from "lucide-react";
+import { Link2, Mail, LayoutGrid, ArrowLeft, Download, Share2, Play, Heart, X as CloseIcon, Copy, MessageCircle, Facebook, Twitter, Pin, AtSign, MoreHorizontal, ShoppingCart, ShoppingBag, Trash2, Layers, Check } from "lucide-react";
 import { useCart, CartItem } from "@/context/CartContext";
 
 // Mock Data for API Readiness
@@ -61,6 +61,18 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         </button>
         <h2 className="text-[20px] font-bold tracking-[0.1em] uppercase mb-8 text-black">{title}</h2>
         {children}
+      </div>
+    </div>
+  );
+};
+
+const Tooltip = ({ children, text }: { children: React.ReactNode; text: string }) => {
+  return (
+    <div className="relative group/tooltip flex items-center justify-center">
+      {children}
+      <div className="absolute bottom-full mb-3 px-3 py-1.5 bg-black text-white text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover/tooltip:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-[120] translate-y-2 group-hover/tooltip:translate-y-0">
+        {text}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-black" />
       </div>
     </div>
   );
@@ -146,15 +158,20 @@ const Portfolio = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   
   // Modal States
-  const [activeModal, setActiveModal] = useState<null | "favorites" | "share" | "download" | "cart">(null);
+  const [activeModal, setActiveModal] = useState<null | "favorites" | "share" | "download" | "cart" | "buy-all">(null);
   const { cart, addToCart, totalItems } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Generate 40 dummy images for the selected album
   const DUMMY_GALLERY = Array.from({ length: 40 }).map((_, i) => ({
     id: `photo-${selectedAlbum?.id || 0}-${i}`,
     url: `https://picsum.photos/seed/${(selectedAlbum?.id || 0) * 100 + i}/800/1200`,
     title: `${selectedAlbum?.title || "Photo"} #${i + 1}`,
-    price: 15.00
+    price: 4.00
   }));
 
   const filteredAlbums = selectedCategory === "all" 
@@ -251,18 +268,34 @@ const Portfolio = () => {
                     <h2 className="text-sm font-bold uppercase tracking-widest mb-1">{selectedAlbum.title}</h2>
                     <p className="text-[10px] text-gray-500 font-medium">SM PHOTOGRAPHY LIMITED</p>
                 </div>
-                <div className="flex items-center gap-8 text-gray-400">
-                    <div className="relative cursor-pointer group hover:text-black transition-colors" onClick={() => setActiveModal("cart")}>
-                      <ShoppingBag size={20} />
-                      {totalItems > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                          {totalItems}
-                        </span>
-                      )}
-                    </div>
-                    <Download size={18} className="cursor-pointer hover:text-black" onClick={() => setActiveModal("download")} />
-                    <Share2 size={18} className="cursor-pointer hover:text-black" onClick={() => setActiveModal("share")} />
-                    <Play size={18} className="cursor-pointer hover:text-black" />
+                <div className="flex items-center gap-6 text-gray-400">
+                    <Tooltip text="Buy All Photos">
+                      <div 
+                        className="cursor-pointer hover:text-black transition-colors p-1" 
+                        onClick={() => setActiveModal("buy-all")}
+                      >
+                        <Layers size={20} />
+                      </div>
+                    </Tooltip>
+                    <Tooltip text="View Cart">
+                      <div className="relative cursor-pointer group hover:text-black transition-colors" onClick={() => setActiveModal("cart")}>
+                        <ShoppingBag size={20} />
+                        {totalItems > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                            {totalItems}
+                          </span>
+                        )}
+                      </div>
+                    </Tooltip>
+                    <Tooltip text="Download All">
+                      <Download size={18} className="cursor-pointer hover:text-black" onClick={() => setActiveModal("download")} />
+                    </Tooltip>
+                    <Tooltip text="Share Gallery">
+                      <Share2 size={18} className="cursor-pointer hover:text-black" onClick={() => setActiveModal("share")} />
+                    </Tooltip>
+                    <Tooltip text="Slideshow">
+                      <Play size={18} className="cursor-pointer hover:text-black" />
+                    </Tooltip>
                 </div>
             </div>
 
@@ -293,21 +326,27 @@ const Portfolio = () => {
                         )}
                         {/* Interactive Icons on Hover */}
                         <div className="absolute bottom-6 right-6 flex items-center gap-5 text-white translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out">
-                             <div 
-                               className={`hover:scale-125 transition-all p-2 rounded-full ${isInCart ? 'bg-black/40' : 'hover:bg-black/20'}`}
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 if (!isInCart) addToCart({ id: img.id, url: img.url, title: img.title, price: img.price });
-                               }}
-                             >
-                                <ShoppingCart size={20} className={isInCart ? "text-green-400" : ""} />
-                             </div>
-                             <div className="hover:scale-125 transition-all p-2 rounded-full hover:bg-black/20" onClick={() => setActiveModal("favorites")}>
-                                <Heart size={20} className="fill-transparent hover:fill-white" />
-                             </div>
-                             <div className="hover:scale-125 transition-all p-2 rounded-full hover:bg-black/20" onClick={() => setActiveModal("share")}>
-                                <Share2 size={20} />
-                             </div>
+                             <Tooltip text={isInCart ? "In Cart" : "Add to Cart"}>
+                               <div 
+                                 className={`hover:scale-125 transition-all p-2 rounded-full ${isInCart ? 'bg-black/40' : 'hover:bg-black/20'}`}
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   if (!isInCart) addToCart({ id: img.id, url: img.url, title: img.title, price: img.price });
+                                 }}
+                               >
+                                  <ShoppingCart size={20} className={isInCart ? "text-green-400" : ""} />
+                               </div>
+                             </Tooltip>
+                             <Tooltip text="Favorite">
+                               <div className="hover:scale-125 transition-all p-2 rounded-full hover:bg-black/20" onClick={() => setActiveModal("favorites")}>
+                                  <Heart size={20} className="fill-transparent hover:fill-white" />
+                               </div>
+                             </Tooltip>
+                             <Tooltip text="Share Image">
+                               <div className="hover:scale-125 transition-all p-2 rounded-full hover:bg-black/20" onClick={() => setActiveModal("share")}>
+                                  <Share2 size={20} />
+                               </div>
+                             </Tooltip>
                         </div>
                     </div>
                   );
@@ -353,9 +392,16 @@ const Portfolio = () => {
           <div className="flex flex-col gap-10">
             <div className="flex">
               <div className="flex-1 bg-[#f5f5f5] p-4 text-[14px] text-gray-600 font-medium truncate border border-r-0 border-gray-100">
-                https://pixies.et/WRNdiW7U
+                {mounted ? window.location.href : ""}
               </div>
-              <button className="bg-[#2d2d2d] text-white px-8 flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase hover:bg-black transition-colors">
+              <button 
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    navigator.clipboard.writeText(window.location.href);
+                  }
+                }}
+                className="bg-[#2d2d2d] text-white px-8 flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase hover:bg-black transition-colors"
+              >
                 <Copy size={16} />
                 Copy
               </button>
@@ -383,21 +429,47 @@ const Portfolio = () => {
           </div>
         </Modal>
 
-        <Modal isOpen={activeModal === "download"} onClose={() => setActiveModal(null)} title="Download Photo">
-          <div className="flex flex-col gap-6">
-            <p className="text-[15px] text-gray-700 leading-relaxed font-normal">
-              Please enter the download PIN provided by SM Photography Limited to download this photo.
-            </p>
-            <input 
-              type="text" 
-              placeholder="Enter download PIN" 
-              className="w-full border border-gray-300 p-4 text-[15px] focus:border-black outline-none transition-all placeholder:text-gray-300"
-            />
-            <div className="flex justify-end mt-4">
-              <button className="bg-[#2d2d2d] text-white px-10 py-4 text-[13px] font-bold tracking-widest uppercase hover:bg-black transition-colors">
-                Sign In
-              </button>
+        <Modal isOpen={activeModal === "buy-all"} onClose={() => setActiveModal(null)} title="Buy All Images">
+          <div className="flex flex-col gap-8">
+            <div className="p-6 bg-gray-50 rounded-sm border border-gray-100">
+              <h3 className="text-[14px] font-bold uppercase tracking-tight mb-2">{selectedAlbum.title}</h3>
+              <p className="text-[12px] text-gray-500 font-medium tracking-wide leading-relaxed">
+                Purchase all images from this album as a single bundle. You'll receive high-resolution digital downloads for every photo in this collection.
+              </p>
             </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                <span className="text-[13px] font-medium text-gray-500 uppercase tracking-widest">Total Images</span>
+                <span className="text-[14px] font-bold">40 Photos</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-[13px] font-medium text-gray-500 uppercase tracking-widest">Bundle Price</span>
+                <div className="flex flex-col items-end">
+                  <span className="text-[24px] font-bold">£15.00</span>
+                  <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest">Saving over 90%</span>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                addToCart({ 
+                  id: `bundle-${selectedAlbum.id}`, 
+                  url: selectedAlbum.cover, 
+                  title: `FULL ALBUM: ${selectedAlbum.title}`, 
+                  price: 15.00 
+                });
+                setActiveModal("cart");
+              }}
+              className="w-full bg-black text-white py-5 text-[14px] font-bold uppercase tracking-[0.2em] hover:bg-black/90 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+            >
+              <Check size={18} />
+              Confirm & Checkout
+            </button>
+            <p className="text-[10px] text-gray-400 text-center font-medium uppercase tracking-[0.1em]">
+              Secure payment via Stripe
+            </p>
           </div>
         </Modal>
 
