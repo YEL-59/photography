@@ -8,7 +8,7 @@ const Banner = () => {
       <div className="absolute inset-0 z-0 scale-105 animate-slow-zoom">
         <Image
           src="/images/hero.jpg"
-          alt="SM Photography Hero"
+          alt="SM Photography Hero -sections error images  alt"
           fill
           priority
           className="object-cover"
@@ -19,7 +19,7 @@ const Banner = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
       </div>
 
-      {/* Content */}
+      {/* Content for static */}
       <div className="relative z-10 text-center text-white px-6 flex flex-col items-center gap-2 md:gap-4">
         <h1 className="text-[40px] md:text-[84px] font-semibold tracking-tight leading-tight mb-2 selection:bg-white selection:text-black">
           SM Photography

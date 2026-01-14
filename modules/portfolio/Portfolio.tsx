@@ -205,6 +205,8 @@ const PhotoDetailModal = ({
   hasNext: boolean,
   hasPrev: boolean
 }) => {
+  const [isZoomed, setIsZoomed] = useState(false);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -234,7 +236,10 @@ const PhotoDetailModal = ({
         </button>
 
         {/* Image Section */}
-        <div className="w-full md:w-2/3 h-[50vh] md:h-auto bg-gray-50 relative flex items-center justify-center group overflow-hidden">
+        <div 
+          className="w-full md:w-2/3 h-[50vh] md:h-auto bg-gray-50 relative flex items-center justify-center group overflow-hidden cursor-zoom-in"
+          onClick={() => setIsZoomed(true)}
+        >
             {/* Navigation Buttons */}
             {hasPrev && (
               <button 
@@ -258,13 +263,22 @@ const PhotoDetailModal = ({
                 src={photo.url} 
                 alt={photo.title} 
                 fill 
-                className="object-contain p-4 md:p-12" 
+                className="object-contain p-4 md:p-12 transition-transform duration-300" 
             />
+             {/* Gradient Vignette for Focus Effect */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_20%,rgba(0,0,0,0.4)_100%)] z-0 pointer-events-none" />
+            
              {/* Watermark */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-                <span className="text-gray-900 text-7xl md:text-9xl font-black uppercase tracking-[0.2em] transform -rotate-15 select-none opacity-10">
-                    sm
-                </span>
+            <div className="absolute inset-x-0 inset-y-0 z-10 flex flex-col items-center justify-center opacity-60 select-none pointer-events-none scale-100 md:scale-110">
+                <span className="text-[8rem] md:text-[12rem] font-serif leading-none tracking-tight text-white/40 drop-shadow-2xl">SM</span>
+                <span className="text-lg md:text-3xl font-light tracking-[0.4em] text-white/50 uppercase mt-[-1rem] md:mt-[-2rem] mb-16 drop-shadow-xl font-sans">PHOTOGRAPHY</span>
+                 <div className="w-[40%] h-[1px] bg-white/20 shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+                 <span className="text-white/30 text-[8px] md:text-xs tracking-[0.2em] mt-2 uppercase font-medium">© SM Photography Limited</span>
+            </div>
+            
+            {/* View Fullscreen Hint */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-full group-hover:-translate-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest z-20 pointer-events-none">
+                Click to Enlarge
             </div>
         </div>
 
@@ -322,6 +336,42 @@ const PhotoDetailModal = ({
              </div>
         </div>
       </div>
+
+      {/* Fullscreen Zoom Modal */}
+      {isZoomed && (
+        <div 
+            className="fixed inset-0 z-[200] bg-white/95 backdrop-blur-sm flex items-center justify-center cursor-zoom-out animate-fade-in"
+            onClick={(e) => {
+                e.stopPropagation();
+                setIsZoomed(false);
+            }}
+        >
+            <div className="relative w-full h-full p-4 md:p-10 flex items-center justify-center">
+                 <Image 
+                    src={photo.url} 
+                    alt={photo.title} 
+                    fill 
+                    className="object-contain select-none" 
+                    quality={100}
+                    priority
+                 />
+                 
+                 {/* Zoomed Watermark */}
+                 <div className="absolute inset-x-0 inset-y-0 z-10 flex flex-col items-center justify-center opacity-50 select-none pointer-events-none scale-125">
+                    <span className="text-[12rem] md:text-[20rem] font-serif leading-none tracking-tight text-white/30 drop-shadow-2xl">SM</span>
+                    <span className="text-2xl md:text-5xl font-light tracking-[0.5em] text-white/40 uppercase mt-[-1.5rem] md:mt-[-3rem] mb-24 drop-shadow-xl">PHOTOGRAPHY</span>
+                     <div className="w-[45%] h-[1.5px] bg-white/20 shadow-[0_0_20px_rgba(255,255,255,0.3)]" />
+                 </div>
+                 
+                 <button 
+                    className="absolute top-6 right-6 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors text-black"
+                    onClick={() => setIsZoomed(false)}
+                 >
+                    <CloseIcon size={24} />
+                 </button>
+            </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -513,10 +563,10 @@ const Portfolio = () => {
                             loading="lazy"
                         />
                         {/* Watermark Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity">
-                            <span className="text-white text-7xl md:text-9xl font-black uppercase tracking-[0.2em] transform -rotate-15 select-none">
-                                sm
-                            </span>
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors z-[5]" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-50 group-hover:opacity-70 transition-all duration-300 z-10">
+                            <span className="text-7xl md:text-8xl font-serif font-black text-white/90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">SM</span>
+                            <span className="text-[10px] md:text-xs tracking-[0.3em] text-white font-bold uppercase mt-[-8px] drop-shadow-md">PHOTOGRAPHY</span>
                         </div>
                         {/* Status Badge */}
                         {isInCart && (
