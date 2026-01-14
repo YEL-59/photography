@@ -31,7 +31,7 @@ const Navbar = () => {
   const { totalItems } = useCart();
   
   const hasAlbum = searchParams.get("album");
-  const isLightPage = (pathname === "/portfolio" && !hasAlbum) || pathname === "/contact" || pathname === "/about" || pathname === "/cart";
+  const isLightPage = (pathname === "/portfolio" && !hasAlbum) || pathname === "/contact" || pathname === "/about" || pathname === "/cart" || pathname === "/licensing";
 
   const matches = [
     "BTFC vs Hashtag United 030126",

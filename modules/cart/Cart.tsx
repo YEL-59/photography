@@ -110,7 +110,37 @@ const CartPage = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <button className="w-full bg-black text-white py-5 flex items-center justify-center gap-3 text-[14px] font-bold uppercase tracking-[0.2em] hover:bg-black/90 transition-all shadow-lg active:scale-[0.98]">
+                  {/* Local Agreement State managed inline via DOM or useState */}
+                  <div className="flex items-start gap-3 mb-6">
+                    <input 
+                        type="checkbox" 
+                        id="licensing-cart-page"
+                        className="mt-1 w-4 h-4 rounded-sm border-gray-300 text-black focus:ring-black accent-black"
+                        onChange={(e) => {
+                          const btn = document.getElementById('checkout-btn-page');
+                          if(btn) {
+                              if (e.target.checked) {
+                                btn.removeAttribute('disabled');
+                                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                btn.classList.add('hover:bg-black/90', 'hover:shadow-xl', 'active:scale-[0.98]');
+                              } else {
+                                btn.setAttribute('disabled', 'true');
+                                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                                btn.classList.remove('hover:bg-black/90', 'hover:shadow-xl', 'active:scale-[0.98]');
+                              }
+                          }
+                        }}
+                    />
+                    <label htmlFor="licensing-cart-page" className="text-[12px] text-gray-500 leading-snug cursor-pointer select-none font-medium">
+                        I have read and agree to the <Link href="/licensing" className="underline text-black decoration-gray-400 underline-offset-2 hover:decoration-black">Licensing & Disclaimer</Link> terms.
+                    </label>
+                  </div>
+
+                  <button 
+                    id="checkout-btn-page"
+                    disabled
+                    className="w-full bg-black text-white py-5 flex items-center justify-center gap-3 text-[14px] font-bold uppercase tracking-[0.2em] transition-all shadow-lg opacity-50 cursor-not-allowed"
+                  >
                     <CreditCard size={18} />
                     Pay with Stripe
                   </button>

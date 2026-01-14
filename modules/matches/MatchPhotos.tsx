@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { ArrowLeft, Download, Share2, Play, Heart, X as CloseIcon, Copy, MessageCircle, Facebook, Twitter, Pin, AtSign, ShoppingBag, ShoppingCart, Trash2, Mail, MoreHorizontal, Layers, Check } from "lucide-react";
+import { ArrowLeft, Download, Share2, Play, Heart, X as CloseIcon, Copy, MessageCircle, Facebook, Twitter, Pin, AtSign, ShoppingBag, ShoppingCart, Trash2, Mail, MoreHorizontal, Layers, Check, Tag, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 
@@ -95,10 +95,41 @@ const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
               <span className="text-[14px] font-medium text-gray-500 uppercase tracking-widest">Subtotal</span>
               <span className="text-[20px] font-bold">£{totalPrice.toFixed(2)}</span>
             </div>
+            
+            {/* Agreement Checkbox */}
+            <div className="flex items-start gap-3 my-2">
+               <input 
+                  type="checkbox" 
+                  id="licensing-start-matches"
+                  className="mt-1 w-4 h-4 rounded-sm border-gray-300 text-black focus:ring-black accent-black"
+                  onChange={(e) => {
+                     const btn = document.getElementById('checkout-btn-matches');
+                     if(btn) {
+                        if (e.target.checked) {
+                           btn.removeAttribute('disabled');
+                           btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                           btn.classList.add('hover:bg-black/90', 'hover:shadow-xl', 'active:scale-[0.98]');
+                        } else {
+                           btn.setAttribute('disabled', 'true');
+                           btn.classList.add('opacity-50', 'cursor-not-allowed');
+                           btn.classList.remove('hover:bg-black/90', 'hover:shadow-xl', 'active:scale-[0.98]');
+                        }
+                     }
+                  }}
+               />
+               <label htmlFor="licensing-start-matches" className="text-[11px] text-gray-500 leading-snug cursor-pointer select-none font-medium">
+                  I agree to the <Link href="/licensing" className="underline text-black decoration-gray-400 underline-offset-2 hover:decoration-black" onClick={() => onClose()}>Licensing & Disclaimer</Link> terms.
+               </label>
+            </div>
+
             <p className="text-[12px] text-gray-400 font-medium leading-relaxed">
               Taxes and shipping calculated at checkout if applicable.
             </p>
-            <button className="w-full bg-black text-white py-5 text-[14px] font-bold uppercase tracking-[0.2em] hover:bg-black/90 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]">
+            <button 
+                id="checkout-btn-matches"
+                disabled
+                className="w-full bg-black text-white py-5 text-[14px] font-bold uppercase tracking-[0.2em] transition-all shadow-lg opacity-50 cursor-not-allowed"
+            >
               Checkout (Stripe)
             </button>
           </div>
@@ -108,9 +139,153 @@ const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
   );
 };
 
+// Photo Detail Modal Component
+const PhotoDetailModal = ({ 
+  photo, 
+  isOpen, 
+  onClose, 
+  onAddToCart, 
+  isInCart,
+  onNext,
+  onPrev,
+  hasNext,
+  hasPrev
+}: { 
+  photo: any, 
+  isOpen: boolean, 
+  onClose: () => void, 
+  onAddToCart: (item: any) => void, 
+  isInCart: boolean,
+  onNext: () => void,
+  onPrev: () => void,
+  hasNext: boolean,
+  hasPrev: boolean
+}) => {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" && hasNext) onNext();
+      if (e.key === "ArrowLeft" && hasPrev) onPrev();
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onNext, onPrev, hasNext, hasPrev, onClose]);
+
+  if (!isOpen || !photo) return null;
+  
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 md:p-8 animate-fade-in">
+       {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose} />
+      
+      {/* Content */}
+      <div className="relative w-full max-w-6xl h-full md:h-auto md:max-h-[90vh] bg-white rounded-sm shadow-2xl overflow-hidden flex flex-col md:flex-row animate-slide-up">
+        {/* Mobile Close Button */}
+        <button 
+            onClick={onClose} 
+            className="absolute top-4 right-4 z-50 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors md:hidden text-black"
+        >
+            <CloseIcon size={24} />
+        </button>
+
+        {/* Image Section */}
+        <div className="w-full md:w-2/3 h-[50vh] md:h-auto bg-gray-50 relative flex items-center justify-center group overflow-hidden">
+            {/* Navigation Buttons */}
+            {hasPrev && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                className="absolute left-4 z-20 p-2 rounded-full bg-white/80 hover:bg-white text-black transition-all shadow-lg opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 duration-300"
+              >
+                <ChevronLeft size={24} />
+              </button>
+            )}
+            
+            {hasNext && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onNext(); }}
+                className="absolute right-4 z-20 p-2 rounded-full bg-white/80 hover:bg-white text-black transition-all shadow-lg opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 duration-300"
+              >
+                <ChevronRight size={24} />
+              </button>
+            )}
+
+            <Image 
+                src={photo.url} 
+                alt={photo.title} 
+                fill 
+                className="object-contain p-4 md:p-12" 
+            />
+             {/* Watermark */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                <span className="text-gray-900 text-7xl md:text-9xl font-black uppercase tracking-[0.2em] transform -rotate-15 select-none opacity-10">
+                    sm
+                </span>
+            </div>
+        </div>
+
+        {/* Details Section */}
+        <div className="w-full md:w-1/3 bg-white p-8 md:p-12 flex flex-col overflow-y-auto">
+            <div className="flex justify-between items-start mb-6">
+                <h2 className="text-2xl font-bold uppercase tracking-tight leading-tight">{photo.title}</h2>
+                 <button onClick={onClose} className="rounded-full hover:bg-gray-100 p-2 transition-colors hidden md:block">
+                   <CloseIcon size={24} className="text-gray-400 hover:text-black" />
+                 </button>
+            </div>
+            
+             <div className="flex items-center gap-3 mb-8">
+                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-[10px] font-bold uppercase tracking-widest rounded-sm text-gray-600">
+                    <Tag size={12} /> Digital
+                 </span>
+                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[10px] font-bold uppercase tracking-widest rounded-sm text-green-700">
+                    <Check size={12} /> Available
+                 </span>
+             </div>
+
+            <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                Premium high-resolution digital photography. Perfect for editorial use, prints, or digital displays. Includes full commercial license options.
+            </p>
+
+             <div className="mt-auto space-y-6">
+                 <div className="flex items-center justify-between pb-6 border-b border-gray-100">
+                     <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">Price</span>
+                     <span className="text-3xl font-bold">£{photo.price?.toFixed(2)}</span>
+                 </div>
+
+                 <button 
+                     onClick={() => onAddToCart(photo)}
+                     className={`w-full py-5 text-[14px] font-bold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] ${
+                         isInCart 
+                         ? "bg-green-600 text-white hover:bg-green-700"
+                         : "bg-black text-white hover:bg-black/90"
+                     }`}
+                 >
+                     {isInCart ? (
+                         <> <Check size={18} /> In Cart </>
+                     ) : (
+                         <> <ShoppingBag size={18} /> Add to Cart </>
+                     )}
+                 </button>
+                 
+                 <div className="grid grid-cols-2 gap-4">
+                     <button className="flex items-center justify-center gap-2 py-3 border border-gray-200 text-[11px] font-bold uppercase tracking-widest hover:border-black transition-colors">
+                        <Heart size={16} /> Favorite
+                     </button>
+                      <button className="flex items-center justify-center gap-2 py-3 border border-gray-200 text-[11px] font-bold uppercase tracking-widest hover:border-black transition-colors">
+                        <Share2 size={16} /> Share
+                     </button>
+                 </div>
+             </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MatchPhotos = ({ title }: { title: string }) => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [activeModal, setActiveModal] = useState<null | "favorites" | "share" | "download" | "cart" | "buy-all">(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   const { cart, addToCart, totalItems } = useCart();
   const [mounted, setMounted] = useState(false);
 
@@ -144,6 +319,27 @@ const MatchPhotos = ({ title }: { title: string }) => {
   return (
     <div className="min-h-screen bg-white text-black">
       <CartDrawer isOpen={activeModal === "cart"} onClose={() => setActiveModal(null)} />
+      <PhotoDetailModal 
+            photo={selectedPhoto} 
+            isOpen={!!selectedPhoto} 
+            onClose={() => setSelectedPhoto(null)} 
+            onAddToCart={(item) => !cart.some(i => i.id === item.id) && addToCart(item)}
+            isInCart={cart.some(i => i.id === selectedPhoto?.id)}
+            onNext={() => {
+              const currentIndex = DUMMY_GALLERY.findIndex(p => p.id === selectedPhoto?.id);
+              if (currentIndex < DUMMY_GALLERY.length - 1) {
+                setSelectedPhoto(DUMMY_GALLERY[currentIndex + 1]);
+              }
+            }}
+            onPrev={() => {
+               const currentIndex = DUMMY_GALLERY.findIndex(p => p.id === selectedPhoto?.id);
+               if (currentIndex > 0) {
+                 setSelectedPhoto(DUMMY_GALLERY[currentIndex - 1]);
+               }
+            }}
+            hasNext={selectedPhoto ? DUMMY_GALLERY.findIndex(p => p.id === selectedPhoto.id) < DUMMY_GALLERY.length - 1 : false}
+            hasPrev={selectedPhoto ? DUMMY_GALLERY.findIndex(p => p.id === selectedPhoto.id) > 0 : false}
+      />
       
       {/* Match Hero */}
       <div className="relative w-full h-[50vh] overflow-hidden group">
@@ -229,7 +425,11 @@ const MatchPhotos = ({ title }: { title: string }) => {
               {DUMMY_GALLERY.slice(0, visibleCount).map((img) => {
                 const isInCart = cart.some(i => i.id === img.id);
                 return (
-                  <div key={img.id} className="relative aspect-[3/4] overflow-hidden group bg-gray-100 cursor-pointer">
+                  <div 
+                    key={img.id} 
+                    className="relative aspect-[3/4] overflow-hidden group bg-gray-100 cursor-pointer"
+                    onClick={() => setSelectedPhoto(img)}
+                  >
                       <Image
                           src={img.url}
                           alt={img.title}
