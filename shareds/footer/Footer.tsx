@@ -37,10 +37,13 @@ const Footer = () => {
       </div>
 
       {/* Copyright Bottom (Optional addition for completeness) */}
-      <div className="max-w-[1400px] mx-auto mt-20 pt-8 border-t border-gray-200">
+      <div className="max-w-[1400px] mx-auto mt-20 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-gray-400 text-[12px] uppercase tracking-widest text-center md:text-left">
           © {new Date().getFullYear()} SM PHOTOGRAPHY. ALL RIGHTS RESERVED.
         </p>
+        <Link href="/licensing" className="text-gray-400 hover:text-black text-[12px] uppercase tracking-widest transition-colors border-b border-transparent hover:border-black pb-0.5">
+          Licensing & Disclaimer
+        </Link>
       </div>
     </footer>
   );
