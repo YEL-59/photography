@@ -422,7 +422,7 @@ const MatchPhotos = ({ title }: { title: string }) => {
           </div>
         </div>
 
-        <div className="absolute top-8 left-8 flex items-center gap-4 text-white z-20">
+        {/* <div className="absolute top-8 left-8 flex items-center gap-4 text-white z-20">
            <Link 
             href="/portfolio"
             className="flex items-center gap-2 bg-black/20 hover:bg-black/40 backdrop-blur-md p-2 px-4 rounded-full transition-all text-sm font-medium border border-white/10"
@@ -430,7 +430,7 @@ const MatchPhotos = ({ title }: { title: string }) => {
               <ArrowLeft size={18} />
               Portfolio
            </Link>
-        </div>
+        </div> */}
       </div>
 
       {/* Gallery Grid Section */}
@@ -501,7 +501,7 @@ const MatchPhotos = ({ title }: { title: string }) => {
                         </div>
                       )}
                       {/* Interactive Icons on Hover */}
-                      <div className="absolute bottom-6 right-6 flex items-center gap-5 text-white translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                      <div className="absolute bottom-6 right-6 flex items-center gap-5 text-white translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20">
                            <Tooltip text={isInCart ? "In Cart" : "Add to Cart"}>
                              <div 
                                className={`hover:scale-125 transition-all p-2 rounded-full ${isInCart ? 'bg-black/40' : 'hover:bg-black/20'}`}
